@@ -179,7 +179,10 @@ function handleRequestAsGETEndpoint(request, response) {
 
     var requestData = request.url.split('/echo/')[1];
 
-    response.writeHead(SERVER_HEAD_OK);
+    response.writeHead(SERVER_HEAD_OK, {
+        'Access-Control-Allow-Origin' : '*'
+    });
+
     response.end(requestData);
 }
 
