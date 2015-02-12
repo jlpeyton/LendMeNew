@@ -522,7 +522,7 @@ function handleRequestAsPOSTEndpoint(request, response) {
 
                     setDefaultHeaders(SERVER_HEAD_OK, request, response);
 
-                    database.selectFrom('users', '*', );
+                    // database.selectFrom('users', '*', );
 
                 } else {
 
