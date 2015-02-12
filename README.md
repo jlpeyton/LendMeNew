@@ -38,5 +38,13 @@ Requests to any endpoints using the `/put` format must be done with a `POST` met
 Requests to any endpoints using the `/get` must be done with a `GET` method. Think of them as actions that simply request specific data. Formats for this action are shown below:
 
 - `<table_name>` String containing the name of the table where the item resides
-- `<identifier_type>` How you plan on retrieving the data, by id, username, etc...
+- `<identifier_type>` How you plan on retrieving the data, by id, username, etc... (If `all` is used, every item on the database is returned.
 - `<identifier>` String containing the identifier of the item you wish to retrieve from the table (user_id, user_username)
+
+An example `GET` request might look like:
+
+```
+/get/item/id/1
+
+/get/user/username/masonjar
+```
