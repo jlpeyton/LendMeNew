@@ -462,10 +462,8 @@ function handleRequestAsGETEndpoint(request, response) {
 
                 }
 
-                console.log(rows);
-
                 setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
-                response.end('Nice!');
+                response.end(JSON.stringify(rows));
 
             });
 
