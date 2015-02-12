@@ -16,6 +16,12 @@ The server handles data based on the endpoint you request. To put or pull data f
 /action/<login|post|put>
 ```
 
+Requests that require parameters, using the `POST` method for example, are formatted as such:
+
+```
+parameter1=value&parameter2=data
+```
+
 Requests to any endpoints using the `/put` format must be done with a `POST` method. Think of them as actions that require data to be "pushed" to the server / database in order to obtain a result
 
 - `login` takes two parameters
