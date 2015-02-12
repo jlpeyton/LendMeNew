@@ -111,6 +111,7 @@ var database = {
                 }
 
                 console.log('<MySQL> successfully connected to mysql server');
+
             });
 
             // tell connection flag that connection was successful
@@ -136,26 +137,28 @@ var database = {
      * for data protection, if @param whereLogic is 'null', nothing is deleted / returned
     **/
     deleteFrom : function(mysqlTableName, whereLogic, callback) {
+
         if(whereLogic) {
             // perform query only if whereLogic has been passed
-            mysql.connect()
+            database.connect()
                 .query('DELETE FROM ' + mysqlTableName + ' WHERE ' + (whereLogic || '1 = 1'), callback);
         } else {
             // fail and exit function with error
             callback.call(this, 'ERR: (mysqldatabasedeletionerror): no \'WHERE\' condition applies for selected logic.');
         }
+
     },
 
     /**
      * safely closes the mysql connection
     **/
     end : function() {
-        if(mysql.isConnected) {
+        if(database.isConnected) {
             // reset our flag to indicate no connection exists
-            mysql.isConnected = false;
+            database.isConnected = false;
 
             // send close packet to server
-            mysql.connection.end();
+            database.connection.end();
         }
     },
 
@@ -174,12 +177,12 @@ var database = {
         });
 
         // join arrays of column names and values to add by commas and add them to our query string
-        mysql.connect()
+        database.connect()
             .query('INSERT INTO ' + mysqlTableName + '(' + (databaseColumns.join(',')) + ') VALUES (' + valuesToAdd.join(',') + ')', 
                 // call user's callback function
                 function(err) {
                     // get err param if any and pass it to callback before calling
-                    callback.call(mysql, err);
+                    callback.call(database, err);
                 });
     },
 
@@ -195,7 +198,7 @@ var database = {
     **/
     selectFrom : function(mysqlTableName, databaseColumns, whereLogic, callback) {
         // perform query
-        mysql.connect()
+        database.connect()
             .query('SELECT ' + databaseColumns.join(',') + ' FROM ' + mysqlTableName + ' WHERE ' + (whereLogic || '1 = 1'), callback);
     },
 
@@ -222,7 +225,7 @@ var database = {
         keyValuePairs = keyValuePairs.substring(1);
 
         // join arrays of column names and values to add by commas and add them to our query string
-        mysql.connect()
+        database.connect()
             .query('UPDATE ' + mysqlTableName + ' SET ' + keyValuePairs + ' WHERE ' + (whereLogic || '1 = 1'), 
                 // call user's callback function
                 function(err) {
@@ -426,7 +429,22 @@ function handleRequestAsActionLogin(request, response) {
     });
 
     request.on('end', function() {
-        mysql.
+        
+        try {
+
+            var parsedPostData = JSON.parse(postData);
+            console.log('<436: Post data received> ' + postData);
+
+            response.end(postData);
+
+        } catch(exception) {
+
+            var errorResponse = '<437: Exception> The post data received from the client is not formatted as JSON.';
+            console.log(errorResponse);
+            response.end(errorResponse);
+
+        }
+
     });
 
 }

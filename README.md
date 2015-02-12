@@ -18,8 +18,11 @@ The server handles data based on the endpoint you request. To put or pull data f
 
 Requests that require parameters, using the `POST` method for example, are formatted as such:
 
-```
-parameter1=value&parameter2=data
+```js
+{
+    parmeter1 : "parameter_value", 
+    parmeter2 : "parameter_value"
+}
 ```
 
 Requests to any endpoints using the `/put` format must be done with a `POST` method. Think of them as actions that require data to be "pushed" to the server / database in order to obtain a result
@@ -30,6 +33,7 @@ Requests to any endpoints using the `/put` format must be done with a `POST` met
 
 - `put` takes two parameters
     - `table` database table where row will 
+    - `data` String of data to put into database
 
 Requests to any endpoints using the `/get` must be done with a `GET` method. Think of them as actions that simply request specific data. Formats for this action are shown below:
 
