@@ -20,6 +20,7 @@ var SERVER_PORT             = process.env.OPENSHIFT_NODEJS_PORT || 8000;
 var SERVER_HEAD_OK          = 200;
 var SERVER_HEAD_NOTFOUND    = 404;
 var SERVER_HEAD_ERROR       = 500;
+var SERVER_HEAD_AUTH_ERROR  = 400;
 var SERVER_RES_OK           = '200. Server status: OK';
 var SERVER_RES_NOTFOUND     = '404. The file you are looking for could not be found.';
 var SERVER_RES_ERROR        = '500. An invalid request was sent to the server.';
@@ -462,8 +463,10 @@ function handleRequestAsGETEndpoint(request, response) {
 
                 }
 
+                JSONResponse.results = rows;
+
                 setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
-                response.end(JSON.stringify(rows));
+                response.end(JSON.stringify(JSONResponse));
 
             });
 
@@ -505,19 +508,37 @@ function handleRequestAsPOSTEndpoint(request, response) {
             // default JSON response
             var JSONResponse = {
                 
-                status : 200,
-                success: true,
-
+                status  : 200,
+                success : true,
+                error   : false
 
             };
 
+            // login endpoint reached
             if(requestIntent[1] == 'login') {
                 
+                // check to see that the required parameters exist
+                if(parsedPostData.username && parsedPostData.password) {
+
+                    setDefaultHeaders(SERVER_HEAD_OK, request, response);
+
+                    database.selectFrom('users', '*', );
+
+                } else {
+
+                    setDefaultHeaders(SERVER_HEAD_AUTH_ERROR, request, response);
+
+                    JSONResponse.status     = SERVER_HEAD_AUTH_ERROR;
+                    JSONResponse.success    = false;
+                    JSONResponse.error      = 'Invalid parameters sent.';
+                }
+
             } else if(requestIntent[1] == 'put') {
-
+                setDefaultHeaders(SERVER_HEAD_NOTFOUND);
+                response.end(JSON.stringify(JSONResponse));
+            } else {
+                response.end(JSON.stringify(JSONResponse));
             }
-
-            response.end(JSON.stringify(JSONResponse));
 
         } catch(exception) {
 
