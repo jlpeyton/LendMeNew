@@ -26,10 +26,12 @@ var SERVER_RES_ERROR        = '500. An invalid request was sent to the server.';
 var SERVER_RES_POST_ERROR   = '500. Invalid method used. Action expects a POST request.';
 
 var MYSQL_HOST              = process.env.OPENSHIFT_MYSQL_DB_HOST || 'localhost';
-var MYSQL_PORT              = process.env.OPENSHIFT_MYSQL_DB_PORT || '3306';
+var MYSQL_PORT              = process.env.OPENSHIFT_MYSQL_DB_PORT || '38386';
 var MYSQL_USERNAME          = 'admin8AnEDyb';
 var MYSQL_PASSWORD          = 'Me4VU3l42uZS';
 var MYSQL_DATABASE          = 'lendme';
+
+var DEFAULT_ACCESS_CONTROL  = '*';
 
 // import node.js packages
 
@@ -64,8 +66,9 @@ var dictionaryOfMimeTypes = {
 var dictionaryOfRoutes  = {
 
     '/'                             : 'index.html',
-    '/post'                         : handleRequestAsPostData,
-    '/action/login'                 : handleRequestAsActionLogin
+    '/echo/post'                    : handleRequestAsEchoPost,
+    '/login'                        : handleRequestAsPOSTEndpoint,
+    '/put'                          : handleRequestAsPOSTEndpoint
 
 };
 
@@ -84,21 +87,23 @@ var database = {
      * creates and establishes a connection to
      * the mysql server
      *
-     * @param host      = {String} specifying mysql server address
-     * @param user      = {String} specifying database account username
-     * @param password  = {String} specifying database account password
-     * @param database  = {String} specifying the name of database to connect to
+     * @param host          = {String} specifying mysql server address
+     * @param user          = {String} specifying database account username
+     * @param password      = {String} specifying database account password
+     * @param databaseName  = {String} specifying the name of database to connect to
     **/
-    connect : function(host, user, password, database) {
+    connect : function(host, user, password, databaseName) {
         // check to see if previous connection exists, or @params for new connection are passed
         if(!database.isConnected || (host && user && password)) {
+
             // create connection blueprint
             database.connection = mysql.createConnection({
 
-                host:           host || MYSQL_HOST,
-                user:           user || MYSQL_USERNAME,
-                pass:       password || MYSQL_PASSWORD,
-                database:   database || MYSQL_DATABASE
+                host:       host || MYSQL_HOST,
+                user:       user || MYSQL_USERNAME,
+                password:   password || MYSQL_PASSWORD,
+                database:   databaseName || MYSQL_DATABASE,
+                port:       MYSQL_PORT
 
             });
 
@@ -197,6 +202,11 @@ var database = {
      * if @param whereLogic is 'null', all rows are selected and returned
     **/
     selectFrom : function(mysqlTableName, databaseColumns, whereLogic, callback) {
+
+        if(typeof databaseColumns == 'string') {
+            databaseColumns = [databaseColumns];
+        }
+
         // perform query
         database.connect()
             .query('SELECT ' + databaseColumns.join(',') + ' FROM ' + mysqlTableName + ' WHERE ' + (whereLogic || '1 = 1'), callback);
@@ -265,6 +275,17 @@ function requestRouter(request, response) {
 }
 
 /**
+ * sets headers for current response according to default settings
+ */
+function setDefaultHeaders(status, request, response) {
+
+    response.writeHead(status, {
+        'Access-Control-Allow-Origin' : DEFAULT_ACCESS_CONTROL,
+        'Content-Type' : mimeTypeParser(request, response)
+    });
+}
+
+/**
  * Checks passed requests for a defined file Mime Type.
  *
  * @return {String} requestMimeType     a file mimetype of current request if defined, or a default .txt mime type 
@@ -274,6 +295,10 @@ function mimeTypeParser(request, response) {
 
     var requestToHandle         = requestRouter(request, response);
     var requestMimeType         = dictionaryOfMimeTypes['txt'];
+
+    if(typeof requestToHandle == 'function') {
+        requestToHandle = request.url;
+    }
 
     // retrieve file extension from current request by grabbing
     // suffix after last period of request string
@@ -301,14 +326,11 @@ function handleRequestAsFileStream(request, response) {
 
             console.log('File ' + requestToHandle + ' could not be served -> ' + error);
             
-            response.writeHead(SERVER_HEAD_NOTFOUND);
+            setDefaultHeaders(SERVER_HEAD_NOTFOUND, request, response);
             response.end(SERVER_RES_NOTFOUND);
         }
 
-        response.writeHead(SERVER_HEAD_OK, {
-            'Content-Type' : mimeTypeParser(request, response)
-        });
-
+        setDefaultHeaders(SERVER_HEAD_OK, request, response);
         response.end(data);
 
     });
@@ -324,7 +346,7 @@ function handleRequestAsAPICall(request, response) {
     var APIResponseData = '';
 
     if(APIURI == '') {
-        response.writeHead(SERVER_HEAD_ERROR);
+        setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
         return response.end(SERVER_RES_ERROR);
     }
 
@@ -335,13 +357,13 @@ function handleRequestAsAPICall(request, response) {
         });
 
         APIResponse.on('end', function() {
-            response.writeHead(SERVER_HEAD_OK);
+            setDefaultHeaders(SERVER_HEAD_OK, request, response);
             response.end(APIResponseData);
         });
 
     }).on('error', function(error) {
         console.log('<HTTP.Get> ' + error.message);
-        response.writeHead(SERVER_HEAD_ERROR);
+        setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
         response.end(APIURI);
     });
 
@@ -358,7 +380,7 @@ function handleRequestAsAPIPOSTCall(request, response) {
     var APIResponseData     = '';
 
     if(APIURI == '') {
-        response.writeHead(SERVER_HEAD_ERROR);
+        setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
         return response.end(SERVER_RES_ERROR);
     }
 
@@ -388,7 +410,10 @@ function handleRequestAsAPIPOSTCall(request, response) {
             APIResponse.on('end', function() {
 
                 response.writeHead(SERVER_HEAD_OK, {
-                    'Content-Type' : 'text/html',
+
+                    'Access-Control-Allow-Origin' : '*',
+                    'Content-Type' : 'text/html'
+                
                 });
 
                 console.log(APIResponseData);
@@ -406,41 +431,103 @@ function handleRequestAsAPIPOSTCall(request, response) {
  */
 function handleRequestAsGETEndpoint(request, response) {
 
-    var requestData = request.url.split('/echo/')[1];
+    var requestIntent = request.url.split('/');
 
-    response.writeHead(SERVER_HEAD_OK, {
-        'Access-Control-Allow-Origin' : '*'
-    });
+    // /get/item/keyword/query
+    
+    if(requestIntent[2] == 'item') {
 
-    response.end(requestData);
+        // search query is being sent
+        if(requestIntent[3] == 'keyword') {
+
+            var JSONResponse = {
+
+                status : 200,
+                success: true
+
+            };
+
+            var query = requestIntent[4];
+
+            database.selectFrom('items', '*', "item_name LIKE '%" + query + "%' OR category LIKE '%" + query + "%' OR keywords LIKE '%" + query + "%'", function(error, rows, columns) {
+
+                if(error) {
+
+                    var errorResponse = '<MySQL> An error occurred fetching data from the database';
+
+                    setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
+                    response.end(errorResponse);
+
+                    return console.log(errorResponse);
+
+                }
+
+                console.log(rows);
+
+                setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
+                response.end('Nice!');
+
+            });
+
+        } 
+
+    } else {
+
+        setDefaultHeaders(SERVER_HEAD_OK, request, response);
+        response.end(requestData);
+
+    }
 }
 
-function handleRequestAsActionLogin(request, response) {
+/**
+ * handles requets as receiving data with POST method to endpoint /action/*
+ */
+function handleRequestAsPOSTEndpoint(request, response) {
 
-    if(request.method != 'POST') {
-        response.writeHead(SERVER_HEAD_ERROR);
-        response.end(SERVER_RES_POST_ERROR);
-    }
+    // if(request.method != 'POST') {
+    //     setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
+    //     return response.end(SERVER_RES_POST_ERROR);
+    // }
 
-    var postData = '';
+    var requestIntent   = request.url.split('/');
+    var postData        = '';
 
     request.on('data', function(chunk) {
         postData += chunk;
     });
 
     request.on('end', function() {
-        
+
         try {
 
+            // parse response as a JSON object.
             var parsedPostData = JSON.parse(postData);
-            console.log('<436: Post data received> ' + postData);
+            console.log('<~400: Post data received> ' + postData);
 
-            response.end(postData);
+            // default JSON response
+            var JSONResponse = {
+                
+                status : 200,
+                success: true,
+
+
+            };
+
+            if(requestIntent[1] == 'login') {
+                
+            } else if(requestIntent[1] == 'put') {
+
+            }
+
+            response.end(JSON.stringify(JSONResponse));
 
         } catch(exception) {
 
-            var errorResponse = '<437: Exception> The post data received from the client is not formatted as JSON.';
+            var errorResponse = '<~400: Exception> The post data received from the client is not formatted as JSON.';
+            
             console.log(errorResponse);
+
+            setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
             response.end(errorResponse);
 
         }
@@ -450,12 +537,12 @@ function handleRequestAsActionLogin(request, response) {
 }
 
 /**
- * handle all requests formed as /post and relay it back to the client
+ * handle all requests formed as /post and echos / relays it back to the client
  */
-function handleRequestAsPostData(request, response) {
+function handleRequestAsEchoPost(request, response) {
 
     if(request.method != 'POST') {
-        response.writeHead(SERVER_HEAD_ERROR);
+        setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
         response.end(SERVER_RES_ERROR);
     }
 
@@ -466,7 +553,7 @@ function handleRequestAsPostData(request, response) {
     });
 
     request.on('end', function() {
-        response.writeHead(SERVER_HEAD_OK);
+        setDefaultHeaders(SERVER_HEAD_OK, request, response);
         response.end(postData);
     });
 }
@@ -482,13 +569,15 @@ function mainRequestHandler(request, response) {
         if(typeof currentRequest == 'function') {
             currentRequest(request, response);
         } else if(currentRequest.match(/^\/test(\/)?$/gi)) {
-            response.writeHead(SERVER_HEAD_OK);
+            setDefaultHeaders(SERVER_HEAD_OK, request, response);
             response.end(SERVER_RES_OK);
+        } else if(currentRequest.match(/^\/api\/post\/(.*)/gi)) {
+
         } else if(currentRequest.match(/^\/api\/post\/(.*)/gi)) {
             handleRequestAsAPIPOSTCall(request, response);
         } else if(currentRequest.match(/^\/api\/(.*)/gi)) {
             handleRequestAsAPICall(request, response);
-        } else if(currentRequest.match(/^\/echo\/(.*)/gi)) {
+        } else if(currentRequest.match(/^\/get\/(.*)/gi)) {
             handleRequestAsGETEndpoint(request, response);
         } else {
             handleRequestAsFileStream(request, response);
