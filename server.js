@@ -173,6 +173,18 @@ function handleRequestAsAPICall(request, response) {
 }
 
 /**
+ * handles requets as receiving data with GET method
+ */
+function handleRequestAsGETEndpoint(request, response) {
+
+    var requestData = request.url.split('/echo/')[1];
+
+    response.writeHead(SERVER_HEAD_OK);
+    response.end(requestData);
+}
+
+
+/**
  * POSTs current api request to endpoint uri and returns response to client
  */
 function handleRequestAsAPIPOSTCall(request, response) {
@@ -265,6 +277,8 @@ function mainRequestHandler(request, response) {
             handleRequestAsAPIPOSTCall(request, response);
         } else if(currentRequest.match(/^\/api\/(.*)/gi)) {
             handleRequestAsAPICall(request, response);
+        } else if(currentRequest.match(/^\/echo\/(.*)/gi)) {
+            handleRequestAsGETEndpoint(request, response);
         } else {
             handleRequestAsFileStream(request, response);
         }
