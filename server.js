@@ -67,6 +67,8 @@ var dictionaryOfMimeTypes = {
 var dictionaryOfRoutes  = {
 
     '/'                             : 'index.html',
+    '/view/results'                 : 'results.html',
+    '/view/item'                    : 'item.html',
     '/echo/post'                    : handleRequestAsEchoPost,
     '/login'                        : handleRequestAsPOSTEndpoint,
     '/put'                          : handleRequestAsPOSTEndpoint
@@ -434,19 +436,17 @@ function handleRequestAsGETEndpoint(request, response) {
 
     var requestIntent = request.url.split('/');
 
-    // /get/item/keyword/query
+    var JSONResponse = {
+
+        status : 200,
+        success: true
+
+    };
     
     if(requestIntent[2] == 'item') {
 
         // search query is being sent
         if(requestIntent[3] == 'keyword') {
-
-            var JSONResponse = {
-
-                status : 200,
-                success: true
-
-            };
 
             var query = requestIntent[4];
 
@@ -465,17 +465,80 @@ function handleRequestAsGETEndpoint(request, response) {
 
                 JSONResponse.results = rows;
 
-                setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
+                setDefaultHeaders(SERVER_HEAD_OK, request, response);
                 response.end(JSON.stringify(JSONResponse));
 
             });
 
-        } 
+        } else if(requestIntent[3] == 'id') {
+
+            var query = requestIntent[4];
+
+            database.selectFrom('items', '*', "itemId='" + query + "'", function(error, rows, columns) {
+
+                if(error) {
+
+                    var errorResponse = '<MySQL> An error occurred fetching data from the database';
+
+                    setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
+                    response.end(errorResponse);
+
+                    return console.log(errorResponse);
+
+                }
+
+                JSONResponse.results = rows;
+
+                setDefaultHeaders(SERVER_HEAD_OK, request, response);
+                response.end(JSON.stringify(JSONResponse));
+
+            });
+
+        } else {
+
+            setDefaultHeaders(SERVER_HEAD_OK, request, response);
+            response.end(JSON.stringify(JSONResponse));
+            
+        }
+
+    } else if(requestIntent[2] == 'user') {
+
+        // search query is being sent
+        if(requestIntent[3] == 'id') {
+
+            var query = requestIntent[4];
+
+            database.selectFrom('users', '*', 'userId="' + query + '"', function(error, rows, columns) {
+
+                if(error) {
+
+                    var errorResponse = '<MySQL> An error occurred fetching data from the database';
+
+                    setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
+                    response.end(errorResponse);
+
+                    return console.log(errorResponse);
+
+                }
+
+                JSONResponse.results = rows;
+
+                setDefaultHeaders(SERVER_HEAD_OK, request, response);
+                response.end(JSON.stringify(JSONResponse));
+
+            });
+
+        } else {
+
+            setDefaultHeaders(SERVER_HEAD_OK, request, response);
+            response.end(JSON.stringify(JSONResponse));
+
+        }
 
     } else {
 
         setDefaultHeaders(SERVER_HEAD_OK, request, response);
-        response.end(requestData);
+        response.end(JSON.stringify(JSONResponse));
 
     }
 }
@@ -594,6 +657,21 @@ function handleRequestAsPOSTEndpoint(request, response) {
 }
 
 /**
+ *
+ */
+function handleRequestAsViewStream(request, response) {
+
+    var requestView = request.url.split('/');
+    console.log(requestView[2]);
+
+    // serve request as a view
+    handleRequestAsFileStream({
+        url : '/view/' + requestView[2]
+    }, response);
+
+}
+
+/**
  * handle all requests formed as /post and echos / relays it back to the client
  */
 function handleRequestAsEchoPost(request, response) {
@@ -636,6 +714,8 @@ function mainRequestHandler(request, response) {
             handleRequestAsAPICall(request, response);
         } else if(currentRequest.match(/^\/get\/(.*)/gi)) {
             handleRequestAsGETEndpoint(request, response);
+        } else if(currentRequest.match(/^\/view\/(.*)/gi)) {
+            handleRequestAsViewStream(request, response);
         } else {
             handleRequestAsFileStream(request, response);
         }

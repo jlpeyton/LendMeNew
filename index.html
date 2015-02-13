@@ -11,11 +11,14 @@
 
     <title>LendMe</title>
 
+    <!-- jQuery -->
+    <script src="/js/jquery.js"></script>
+
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="css/grayscale.css" rel="stylesheet">
+    <link href="/css/grayscale.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -33,40 +36,7 @@
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand page-scroll" href="http://cnulug.org/">
-                    <i class="fa fa-linux"></i>  <span class="light">Lend</span>Me
-                </a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
-                <ul class="nav navbar-nav">
-                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
-                    <li class="hidden">
-                        <a href="#page-top"></a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="http://cnulug.org/">About</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="http://cnulug.org/irc.html">IRC</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="http://cnulug.org/mail.html">Mailing List</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
+    <nav id="header"></nav>
 
     <!-- Intro Header -->
     <header class="intro">
@@ -75,27 +45,34 @@
 
                 <div class="col-md-12">
                     <a href="#/main.html">
-                      <img src="img/logo-large.png" alt="LendMe Logo" class="img-responsive center-block main-logo">
+                      <img src="img/logo-large.png" alt="LendMe Logo" id="logo" class="img-responsive center-block main-logo">
                     </a>
                 </div>
                 <div class="row">
-                    <!-- <div class="col-md-8 col-md-offset-2">
-                        <h1 class="brand-heading">Fridays 4PM</h1>
-                        <h2>Hunter Creech Lab, Luter</h2>
-                        <p class="intro-text">A community for people who use Linux or would like to learn about it. Click below to subscribe to our mailing list.<br />
-                        <a href="http://lists.cnulug.org/mailman/listinfo/cnulug-general_lists.cnulug.org" class="btn btn-circle page-scroll">
-                            <i class="fa fa-linux animated" href="http://lists.cnulug.org/mailman/listinfo/cnulug-general_lists.cnulug.org"></i>
-                        </a>
-                    </div> -->
-                
-                    <form class="navbar-form main-search" >
+
+                    <form novalidate>
+                      <div class="row">
+                      <div class="col-md-8 col-md-offset-3">
+                        <div class="col-md-8">
+                          <div class="input-group">
+                            <input type="text" id="search-bar" class="form-control" placeholder="I need to borrow a...">
+                            <span class="input-group-btn">
+                              <button id="search-button"  class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+
+                    <!-- <form class="navbar-form main-search" >
                         <div class="input-group">
                             <input type="text" id="search-bar" class="form-control" placeholder="Search" name="q">
                             <div class="input-group-btn">
                                 <button class="btn btn-default" id="search-button" type="submit"><i class="glyphicon glyphicon-search"></i></button>
                             </div>
                         </div>
-                    </form>
+                    </form> -->
+
                 </div>
             </div>
         </div>
@@ -110,9 +87,6 @@
 
 <div id="overlay"></div><!-- visibility yo-->
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
 
@@ -124,6 +98,10 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="js/data.js"></script>
+
+    <script>
+      $('#header').load('header.html');
+    </script>
 
 </body>
 
