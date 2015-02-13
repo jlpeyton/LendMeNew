@@ -68,6 +68,7 @@ var dictionaryOfRoutes  = {
 
     '/'                             : 'index.html',
     '/view/results'                 : 'results.html',
+    '/view/item'                    : 'item.html',
     '/echo/post'                    : handleRequestAsEchoPost,
     '/login'                        : handleRequestAsPOSTEndpoint,
     '/put'                          : handleRequestAsPOSTEndpoint

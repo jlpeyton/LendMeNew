@@ -67,9 +67,9 @@ function urlSearchQueryResolver(searchQuery) {
 
 	if(getLocation('href').length > 5) {
 
-		makeGETRequest('/get/item/keyword/' + getLocation('href')[5], function(data) {
+		if(getLocation('href')[4] == 'results') {
 
-			if(getLocation('href')[4] == 'results') {
+			makeGETRequest('/get/item/keyword/' + getLocation('href')[5], function(data) {
 
 				var resultsWrapper = document.getElementById('results');
 				resultsWrapper.innerHTML = '';
@@ -134,9 +134,49 @@ function urlSearchQueryResolver(searchQuery) {
 
 				}
 
+			});
+
+		} else if(getLocation('href')[4] == 'item') {
+
+			var itemContainer = document.getElementById('item-container');
+
+			makeGETRequest('/get/item/id/' + getLocation('href')[5]
+			
+				var row = document.createElement('div');
+				row.className = 'row';
+
+				var colXs4 = document.createElement('div');
+				colXs4.className = 'col-xs-4';
+				colXs4.innerHTML = '<img src="//placehold.it/500x500" class="img-responsive" style="padding-top:10px" />';
+
+				var colXs6 = document.createElement('div');
+				colXs6.className = 'col-xs-6 well';
+				colXs6.style.marginTop = '20px';
+
+				var rowItem2 = document.createElement('div');
+				rowItem2.className = 'row';
+				rowItem2.innerHTML = '<div class="col-xs-6"><h2>Bicycle</h2><h6>from <a href="#">Jonah</a> - <span class="red">336</span></h6><h5><a href="#">Transportation</a></h5></div><div class="col-xs-6"><a href="#" class="btn btn-success btn-lg" style="margin-left:150px">Borrow!</a></div>';
+
+				var rowItem3 = document.createElement('div');
+				rowItem3.className = 'row';
+				rowItem3.innerHTML = '<div class="col-xs-12"><h6>min rep: 100&nbsp;&nbsp;|&nbsp;&nbsp;2 days max.</h6></div>';
+
+				var rowItem4 = document.createElement('div');
+				rowItem4.className = 'row';
+				rowItem4.innerHTML = '<div class="col-xs-12"><p>This is the extended description of my awesome red bicycle. It is the smoothest ride in townand I love to ride it around. It has five speeds and 16 gears. The chain is very rusty, but you can\'t even tell because I love it so much. I hope you like riding it around as much as I do.</p></div>';
+
+				colXs6.appendChild(rowItem2);
+				colXs6.appendChild(rowItem3);
+				colXs6.appendChild(rowItem4);
+
+				row.appendChild(colXs4);
+				row.appendChild(colXs6);
+
+				itemContainer.appendChild(row);
+
 			}
 
-		});
+		}
 
 	}
 
