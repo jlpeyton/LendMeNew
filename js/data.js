@@ -40,7 +40,7 @@ function makePOSTRequest(requestData, requestURI, callback) {
 /**
  * Makes an xmlhttprequest with a GET to a specified uri
  */
-function makeGETRequest(requestData, requestURI, callback) {
+function makeGETRequest(requestURI, callback) {
 
 	var http = new XMLHttpRequest();
 	http.open('GET', requestURI, true);
@@ -61,15 +61,16 @@ function makeGETRequest(requestData, requestURI, callback) {
 function urlSearchQueryResolver(searchQuery) {
 
 	if(searchQuery && searchQuery != '') {
-		getLocation(searchQuery);
+		getLocation().assign('#/' + searchQuery);
 		return false;
 	}
 
 	// this means a parameter has been supplied
 	if(getLocation().hash) {
 
-		//page probably reloaded with searc query still in address bar
-		console.log(getLoacation().hash);
+		makeGETRequest('/get/item/keyword/' + getLocation('hash')[1], function(data) {
+			console.log(data);
+		});
 
 	}
 
@@ -94,6 +95,17 @@ searchButton.addEventListener('click', function(e) {
 
 	// handle search query entered in search bar
 	urlSearchQueryResolver(searchBar.value);
+
+});
+
+searchBar.addEventListener('keydown', function(e) {
+
+	if(e.keyCode == 13) {
+		e.preventDefault();
+
+		// handle search query entered in search bar
+		urlSearchQueryResolver(searchBar.value);
+	}
 
 });
 

@@ -434,19 +434,17 @@ function handleRequestAsGETEndpoint(request, response) {
 
     var requestIntent = request.url.split('/');
 
-    // /get/item/keyword/query
+    var JSONResponse = {
+
+        status : 200,
+        success: true
+
+    };
     
     if(requestIntent[2] == 'item') {
 
         // search query is being sent
         if(requestIntent[3] == 'keyword') {
-
-            var JSONResponse = {
-
-                status : 200,
-                success: true
-
-            };
 
             var query = requestIntent[4];
 
@@ -465,7 +463,7 @@ function handleRequestAsGETEndpoint(request, response) {
 
                 JSONResponse.results = rows;
 
-                setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
+                setDefaultHeaders(SERVER_HEAD_OK, request, response);
                 response.end(JSON.stringify(JSONResponse));
 
             });
@@ -636,6 +634,8 @@ function mainRequestHandler(request, response) {
             handleRequestAsAPICall(request, response);
         } else if(currentRequest.match(/^\/get\/(.*)/gi)) {
             handleRequestAsGETEndpoint(request, response);
+        } else if(currentRequest.match(/^\/view\/(.*)/gi)) {
+
         } else {
             handleRequestAsFileStream(request, response);
         }

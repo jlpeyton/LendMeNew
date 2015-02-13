@@ -79,23 +79,30 @@
                     </a>
                 </div>
                 <div class="row">
-                    <!-- <div class="col-md-8 col-md-offset-2">
-                        <h1 class="brand-heading">Fridays 4PM</h1>
-                        <h2>Hunter Creech Lab, Luter</h2>
-                        <p class="intro-text">A community for people who use Linux or would like to learn about it. Click below to subscribe to our mailing list.<br />
-                        <a href="http://lists.cnulug.org/mailman/listinfo/cnulug-general_lists.cnulug.org" class="btn btn-circle page-scroll">
-                            <i class="fa fa-linux animated" href="http://lists.cnulug.org/mailman/listinfo/cnulug-general_lists.cnulug.org"></i>
-                        </a>
-                    </div> -->
-                
-                    <form class="navbar-form main-search" >
+
+                    <form novalidate>
+                      <div class="row">
+                      <div class="col-md-8 col-md-offset-3">
+                        <div class="col-md-8">
+                          <div class="input-group">
+                            <input type="text" id="search-bar" class="form-control" placeholder="I need to borrow a...">
+                            <span class="input-group-btn">
+                              <button id="search-button"  class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+
+                    <!-- <form class="navbar-form main-search" >
                         <div class="input-group">
                             <input type="text" id="search-bar" class="form-control" placeholder="Search" name="q">
                             <div class="input-group-btn">
                                 <button class="btn btn-default" id="search-button" type="submit"><i class="glyphicon glyphicon-search"></i></button>
                             </div>
                         </div>
-                    </form>
+                    </form> -->
+
                 </div>
             </div>
         </div>
