@@ -4,6 +4,9 @@
 		<title>LendMe Search Results</title>
 		<meta charset="UTF_8">
 
+		<!-- JQuery -->
+		<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
@@ -12,9 +15,6 @@
 
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-
-		<!-- JQuery -->
-		<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
 
 		<style>
 			.hover-color:hover{
@@ -25,7 +25,7 @@
 	</head>
 	<body>
 		<div class="container">
-			<ul class="list-group list-unstyled">
+			<ul class="list-group list-unstyled" id="results">
 				<li class="col-sm-6 remove-bullet center-block" style="margin-top:20px">
 					<div class="clearfix list-group-item hover-color img-rounded">
 						<div class="visible-sm clearfix"></div>
@@ -251,5 +251,9 @@
 				</li>
 			</ul>
 		</div>
+
+		<!-- Custom Theme JavaScript -->
+    	<script src="/js/data.js"></script>
+
 	</body>
 </html>

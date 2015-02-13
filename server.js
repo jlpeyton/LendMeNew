@@ -67,6 +67,7 @@ var dictionaryOfMimeTypes = {
 var dictionaryOfRoutes  = {
 
     '/'                             : 'index.html',
+    '/view/results'                 : 'results.html',
     '/echo/post'                    : handleRequestAsEchoPost,
     '/login'                        : handleRequestAsPOSTEndpoint,
     '/put'                          : handleRequestAsPOSTEndpoint
@@ -592,6 +593,21 @@ function handleRequestAsPOSTEndpoint(request, response) {
 }
 
 /**
+ *
+ */
+function handleRequestAsViewStream(request, response) {
+
+    var requestView = request.url.split('/');
+    console.log(requestView[2]);
+
+    // serve request as a view
+    handleRequestAsFileStream({
+        url : '/view/' + requestView[2]
+    }, response);
+
+}
+
+/**
  * handle all requests formed as /post and echos / relays it back to the client
  */
 function handleRequestAsEchoPost(request, response) {
@@ -635,7 +651,7 @@ function mainRequestHandler(request, response) {
         } else if(currentRequest.match(/^\/get\/(.*)/gi)) {
             handleRequestAsGETEndpoint(request, response);
         } else if(currentRequest.match(/^\/view\/(.*)/gi)) {
-
+            handleRequestAsViewStream(request, response);
         } else {
             handleRequestAsFileStream(request, response);
         }
