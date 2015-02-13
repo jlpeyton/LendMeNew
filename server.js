@@ -450,7 +450,7 @@ function handleRequestAsGETEndpoint(request, response) {
 
             var query = requestIntent[4];
 
-            database.selectFrom('items', '*', "item_name LIKE '%" + query + "%' OR category LIKE '%" + query + "%' OR keywords LIKE '%" + query + "%'", function(error, rows, columns) {
+            database.selectFrom('items', '*', "itemName LIKE '%" + query + "%' OR category LIKE '%" + query + "%' OR keywords LIKE '%" + query + "%'", function(error, rows, columns) {
 
                 if(error) {
 
@@ -524,6 +524,7 @@ function handleRequestAsPOSTEndpoint(request, response) {
 
                     database.selectFrom('users', '*', 'username="' + parsedPostData.username + '"', function(error, rows, columns) {
 
+                        // check for database error
                         if(error) {
 
                             JSONResponse.staus      = SERVER_HEAD_ERROR;
