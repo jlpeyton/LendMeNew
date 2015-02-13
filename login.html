@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>LendMe - Log In/Sign Up</title>
+	<meta charset="UTF-8">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+	<!-- JQuery -->
+	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+	<div class="col-md-6">
+<h2>Register</h2><br>
+
+<form novalidate method="POST" action="/register">
+	<input id="fname" placeholder="First name"/><br><br>
+	<input id="lname" placeholder="Last name" /><br><br>
+	<input id="username" placeholder="Email/Username"/><br><br>
+	<input id="password" placeholder="Password"/><br><br>
+	<input type="button" class="btn btn-default" id="submit" value="Submit"/><br><br>
+</form>
+
+
+</div>
+
+
+
+
+
+<div class="col-md-6"style="border-left:1px solid gray">
+
+<h2>Login</h2><br>
+
+<form novalidate method="POST" action="/login">
+<input id="username" placeholder="Email/Username" /><br><br>
+<input id="password" placeholder="Password"/><br><br>
+<input type="button" class="btn btn-default" id="submit" value="Submit"/>
+</form>
+
+</div>
+</div>
+</body>
+</html>
