@@ -516,13 +516,48 @@ function handleRequestAsPOSTEndpoint(request, response) {
 
             // login endpoint reached
             if(requestIntent[1] == 'login') {
-                
+
                 // check to see that the required parameters exist
                 if(parsedPostData.username && parsedPostData.password) {
 
                     setDefaultHeaders(SERVER_HEAD_OK, request, response);
 
-                    // database.selectFrom('users', '*', );
+                    database.selectFrom('users', '*', 'username="' + parsedPostData.username + '"', function(error, rows, columns) {
+
+                        if(error) {
+
+                            JSONResponse.staus      = SERVER_HEAD_ERROR;
+                            JSONResponse.error      = '<MySQL> An error occurred fetching data from the database -> ' + error;
+                            JSONResponse.success    = false;
+
+                            setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
+                            response.end(JSON.stringify(JSONResponse));
+
+                            return console.log(JSONResponse.error);
+
+                        }
+
+                        // check to see if any records exist with username provided
+                        if(rows.length <= 0 || (rows[0].username != parsedPostData.username || rows[0].password != parsedPostData.password)) {
+
+                            JSONResponse.staus      = SERVER_HEAD_AUTH_ERROR;
+                            JSONResponse.error      = '<MySQL> A user with the username ' + parsedPostData.username + ' does not exist';
+                            JSONResponse.success    = false;
+
+                            setDefaultHeaders(SERVER_HEAD_AUTH_ERROR, request, response);
+                            response.end(JSON.stringify(JSONResponse));
+
+                            return console.log(JSONResponse.error);
+
+                        }
+
+                        // login successful
+                        JSONResponse.data = rows[0];
+
+                        setDefaultHeaders(SERVER_HEAD_OK, request, response);
+                        response.end(JSON.stringify(JSONResponse));
+
+                    });
 
                 } else {
 
@@ -531,6 +566,8 @@ function handleRequestAsPOSTEndpoint(request, response) {
                     JSONResponse.status     = SERVER_HEAD_AUTH_ERROR;
                     JSONResponse.success    = false;
                     JSONResponse.error      = 'Invalid parameters sent.';
+
+                    response.end(JSON.stringify(JSONResponse));
                 }
 
             } else if(requestIntent[1] == 'put') {
