@@ -470,12 +470,75 @@ function handleRequestAsGETEndpoint(request, response) {
 
             });
 
-        } 
+        } else if(requestIntent[3] == 'id') {
+
+            var query = requestIntent[4];
+
+            database.selectFrom('items', '*', "itemId='" + query + "'", function(error, rows, columns) {
+
+                if(error) {
+
+                    var errorResponse = '<MySQL> An error occurred fetching data from the database';
+
+                    setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
+                    response.end(errorResponse);
+
+                    return console.log(errorResponse);
+
+                }
+
+                JSONResponse.results = rows;
+
+                setDefaultHeaders(SERVER_HEAD_OK, request, response);
+                response.end(JSON.stringify(JSONResponse));
+
+            });
+
+        } else {
+
+            setDefaultHeaders(SERVER_HEAD_OK, request, response);
+            response.end(JSON.stringify(JSONResponse));
+            
+        }
+
+    } else if(requestIntent[2] == 'user') {
+
+        // search query is being sent
+        if(requestIntent[3] == 'id') {
+
+            var query = requestIntent[4];
+
+            database.selectFrom('users', '*', 'userId="' + query + '"', function(error, rows, columns) {
+
+                if(error) {
+
+                    var errorResponse = '<MySQL> An error occurred fetching data from the database';
+
+                    setDefaultHeaders(SERVER_HEAD_ERROR, request, response);
+                    response.end(errorResponse);
+
+                    return console.log(errorResponse);
+
+                }
+
+                JSONResponse.results = rows;
+
+                setDefaultHeaders(SERVER_HEAD_OK, request, response);
+                response.end(JSON.stringify(JSONResponse));
+
+            });
+
+        } else {
+
+            setDefaultHeaders(SERVER_HEAD_OK, request, response);
+            response.end(JSON.stringify(JSONResponse));
+
+        }
 
     } else {
 
         setDefaultHeaders(SERVER_HEAD_OK, request, response);
-        response.end(requestData);
+        response.end(JSON.stringify(JSONResponse));
 
     }
 }
