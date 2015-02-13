@@ -1,0 +1,17 @@
+body {
+	background: url("../img/intro-bg.png") repeat;
+	background-size: cover;
+}
+.form-horizontal{
+	border: 4px outset #A8CD1B;
+	border-radius: 10px;
+	background: #E6FEBF;
+	box-shadow: 5px 5px 5px #005A31;
+}
+.head{
+	width: 400px;
+	border: 4px outset #A8CD1B;
+	border-radius: 10px;
+	background: #E6FEBF;
+	box-shadow: 5px 5px 5px #005A31;
+}	
