@@ -1,0 +1,23 @@
+body {
+	background: url("../img/intro-bg.png") repeat;
+	background-size: cover;
+}
+
+.col-xs-6{
+	border: 4px outset #A8CD1B;
+	border-radius: 10px;
+	background: #E6FEBF;
+	box-shadow: 5px 5px 5px #005A31;
+}
+
+ul.nav{border: 4px outset #A8CD1B;
+	border-radius: 10px;
+	background: #E6FEBF;
+	box-shadow: 5px 5px 5px #005A31;}
+
+.tab-content{
+	border: 4px outset #A8CD1B;
+	border-radius: 10px;
+	background: #E6FEBF;
+	box-shadow: 5px 5px 5px #005A31;}
+}
