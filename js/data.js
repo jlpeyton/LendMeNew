@@ -140,7 +140,7 @@ function urlSearchQueryResolver(searchQuery) {
 
 			var itemContainer = document.getElementById('item-container');
 
-			makeGETRequest('/get/item/id/' + getLocation('href')[5]
+			makeGETRequest('/get/item/id/' + getLocation('href')[5], function(data) {
 			
 				var row = document.createElement('div');
 				row.className = 'row';
@@ -174,7 +174,7 @@ function urlSearchQueryResolver(searchQuery) {
 
 				itemContainer.appendChild(row);
 
-			}
+			});
 
 		}
 
